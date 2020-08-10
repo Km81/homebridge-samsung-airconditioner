@@ -89,16 +89,6 @@ SamsungAirco.prototype = {
             .on('get', this.getLockPhysicalControls.bind(this))
             .on('set', this.setLockPhysicalControls.bind(this));  
 	    
-	    
-        //바람세기 설정        
-        this.aircoSamsung.getCharacteristic(Characteristic.RotationSpeed)
-            .setProps({
-                minValue: 0,
-                maxValue: 2,
-                minStep: 1,
-            })
-            .on('get', this.getRotationSpeed.bind(this))
-            .on('set', this.setRotationSpeed.bind(this));
 		
         var informationService = new Service.AccessoryInformation()
             .setCharacteristic(Characteristic.Manufacturer, 'Samsung')
@@ -156,64 +146,6 @@ SamsungAirco.prototype = {
                 //this.log("현재 온도: " + body);
             }
         }.bind(this));
-    },
-
-    getRotationSpeed: function(callback) {
-	var str;
-	var body;
-        str = 'curl -s -k -H "Content-Type: application/json" -H "Authorization: Bearer ' + this.token + '" --cert ' + this.patchCert + ' --insecure -X GET https://' + this.ip + ':8888/devices|jq \'.Devices[1].Wind.speedLevel\'';
-
-        this.execRequest(str, body, function(error, stdout, stderr) {
-            if (error) {
-                callback(error);
-            } else {
-                body = parseInt(stdout);
-            if (body == 0) {
-                callback(null, 2);
-                //this.log("자동풍 확인");
-            } else if (body == 2 || body == 3 || body == 4) {
-                //this.log("미풍 등 확인");
-                callback(null, 1);
-            } else
-		this.log("풍속 확인 오류");
-            }
-        }.bind(this));
-    },
-    
-    setRotationSpeed: function(state, callback) {
-
-        switch (state) {
-
-            case 2:
-	        var str;
-	        var body;
-                //this.log("자동풍 설정")
-                str = 'curl -X PUT -d \'{"speedLevel": 0}\' -v -k -H "Content-Type: application/json" -H "Authorization: Bearer ' + this.token + '" --cert ' + this.patchCert + ' --insecure https://' + this.ip + ':8888/devices/0/wind';
- 
-	        this.execRequest(str, body, function(error, stdout, stderr) {
-                    if (error) {
-                        callback(error);
-                    } else {
-                        callback();
-                    }
-                }.bind(this));
-                break;
-
-            case 1:
-	        var str;
-	        var body;
-                //this.log("미풍 설정")
-                str = 'curl -X PUT -d \'{"speedLevel": 2}\' -v -k -H "Content-Type: application/json" -H "Authorization: Bearer ' + this.token + '" --cert ' + this.patchCert + ' --insecure https://' + this.ip + ':8888/devices/0/wind';
-
-                this.execRequest(str, body, function(error, stdout, stderr) {
-                    if (error) {
-                        callback(error);
-                    } else {
-                        callback();
-                    }
-                }.bind(this));
-                break;             
-        }
     },
     
     getLockPhysicalControls: function(callback) {
