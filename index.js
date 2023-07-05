@@ -144,7 +144,7 @@ SamsungAirco.prototype = {
     getLockPhysicalControls: function(callback) {
 	var str;
 	var body;
-        str = 'curl -s -k -H "Content-Type: application/json" -H "Authorization: Bearer ' + this.token + '" --cert ' + this.patchCert + ' --insecure -X GET https://' + this.ip + ':8888/devices|jq \'.Devices[1].Mode.options[3]\'';
+        str = 'curl -s -k -H "Content-Type: application/json" -H "Authorization: Bearer ' + this.token + '" --cert ' + this.patchCert + ' --insecure -X GET https://' + this.ip + ':8888/devices|jq \'.Devices[1].Mode.options[4]\'';
 
         this.execRequest(str, body, function(error, stdout, stderr) {
             if (error) {
