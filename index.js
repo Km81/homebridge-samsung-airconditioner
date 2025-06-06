@@ -1,5 +1,3 @@
-'use strict';
-
 var Service, Characteristic, Accessory;
 const exec = require("child_process").exec;
 
